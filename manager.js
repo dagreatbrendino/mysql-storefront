@@ -19,7 +19,7 @@ var connection = mysql.createConnection({
 connection.connect(function(err){
     if(err) throw err;
 
-    console.log("connected as id: " + connection.threadId + "\n");
+    // console.log("connected as id: " + connection.threadId + "\n");
 });
 //function that prompts manager for what they would like to do
 
@@ -28,8 +28,9 @@ var viewProducts = function(){
     connection.query("SELECT * FROM products", function(err, res){
         if (err) throw err;
         console.table(res);
-        connection.end();
+        promptManager();
     });
+    
 }
 
 //function that will show manager all products with inventory < 50
@@ -37,8 +38,9 @@ var viewLow = function(){
     connection.query("SELECT * FROM products WHERE stock_quantity < ?",[50], function(err,res){
         if (err) throw err;
         console.table(res);
-        connection.end();
+        promptManager();
     })
+
 }
 
 //function that allows manager to add to product inventory of a specific product with a specific amount
@@ -48,16 +50,101 @@ var addInventory = function(amount, prod){
         function(err, result){
             if (err) throw err;
             console.log("Stock updated!")
+            promptManager();
         });
+
 }
 //function that allows manager to add a new product through a series of prompts, validating input along the way
 var addProduct = function(name, department, price, stock){
     connection.query("INSERT INTO products SET product_name = ?, department_name = ?, price = ?, stock_quantity = ?",
-    [name, department, price, stock]),
+    [name, department, price, stock],
     function(err, res){
         if (err) throw err;
         console.log("new product added!");
-    }
+        promptManager();
+    });
+  
 }
 
-addProduct("gaming pc", "Video Games", 1800, 700);
+var promptManager = function(){
+    inquirer.prompt([
+        {
+            name: "managerAction",
+            type: "list",
+            message: "What would you like to do?",
+            choices: ["View Products", "View Low Inventory", "Add Stock to Inventory", "Add a New Product", "Logout"]
+        }
+    ]).then(function (answer){
+        var action = answer.managerAction;
+        switch (action){
+            case "View Products": 
+                viewProducts();
+                break;
+            case "View Low Inventory":
+                viewLow();
+                break;
+            case "Add Stock to Inventory":
+                inquirer.prompt([
+                    {
+                        name: "productToUpdate",
+                        type: "input",
+                        message: "Enter the id of the product you wish to add stock to. "
+                    },
+                    {
+                        name: "amountToAdd",
+                        type: "input",
+                        message: "How much would you like to add?"
+                    }
+                ]).then( function(ans){
+                    var product = parseInt(ans.productToUpdate);
+                    console.log(product);
+                    var quantity = parseInt(ans.amountToAdd);
+                    addInventory(quantity, product);
+                });
+                break;
+            case "Add a New Product":
+                var departments =[];
+                connection.query("SELECT DISTINCT department_name FROM products", function(error, result){
+                    if (error) throw error;
+                    result.forEach(function(element){
+                        departments.push(element.department_name);
+                    });
+                    inquirer.prompt([
+                        {
+                            name: "productName",
+                            type: "input",
+                            message: "Enter the name of the new product"
+                        },
+                        {
+                            name: "productDepartment",
+                            type: "list",
+                            choices: departments,
+                            message: "Chose the appropriate department for this product: "
+                        },
+                        {
+                            name: "productPrice",
+                            type: "input",
+                            message: "Enter the price of this product: "
+                        },
+                        {
+                            name: "productQuantity",
+                            type: "input",
+                            message: "Enter the amount of the product to add to the stock: "
+                        }
+                    ]).then(function(ans){
+                        var prodName = ans.productName;
+                        var prodDep = ans.productDepartment
+                        var prodPrice = parseInt(ans.productPrice);
+                        var prodQuant = parseInt(ans.productQuantity)
+                        addProduct(prodName, prodDep, prodPrice, prodQuant);
+                    })
+                })
+                break;
+            case "Logout": 
+                console.log("Goodbye!");
+                connection.end();
+                break;
+        }
+    })
+}
+promptManager();
