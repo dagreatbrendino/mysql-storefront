@@ -16,8 +16,10 @@ CREATE TABLE products (
   department_name VARCHAR(100) NOT NULL,
   -- Make an integer column called "score" --
   price INTEGER(10) NOT NULL,
-
+  -- Make an integer for the quantity of the product in stock -- 
   stock_quantity INTEGER(6) NOT NULL,
+  -- Make an integer for the total product sales -- 
+  product_sales INTEGER(10) DEFAULT 0,
   -- Set the primary key of the table to id --
   PRIMARY KEY(id)
 );

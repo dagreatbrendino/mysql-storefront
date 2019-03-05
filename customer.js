@@ -74,11 +74,14 @@ var promptQuantity = function(desired_id){
 
 //this function will actually place the order and update the database
 var placeOrder = function(prod, quant){
-    console.log("Ordering " + quant + " of producat at id " + prod.id + " with name " + prod.product_name);
-    connection.query("UPDATE products SET ? WHERE ?",
+    console.log("Ordering " + quant + " of product at id " + prod.id + " with name " + prod.product_name);
+    connection.query("UPDATE products SET ?, ? WHERE ?",
         [
             {
                 stock_quantity: (prod.stock_quantity - quant)
+            },
+            {
+                product_sales: (prod.price * quant)
             },
             {
                 id: prod.id
