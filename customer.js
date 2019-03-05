@@ -23,7 +23,7 @@ connection.connect(function(err){
 })
 //display a table of all the products
 var getProducts = function(){
-    connection.query("SELECT * FROM `products` ", function(error, res){
+    connection.query("SELECT id, product_name, department_name, price, stock_quantity  FROM `products` ", function(error, res){
         if (error) throw error;
         console.table(res);
         promptID();
