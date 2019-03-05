@@ -1,0 +1,23 @@
+{
+  "name": "mysql-storefront",
+  "version": "1.0.0",
+  "description": "an node application for an 'amazon like' storefront",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dagreatbrendino/mysql-storefront.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dagreatbrendino/mysql-storefront/issues"
+  },
+  "homepage": "https://github.com/dagreatbrendino/mysql-storefront#readme",
+  "dependencies": {
+    "inquirer": "^6.2.2",
+    "mysql": "^2.16.0"
+  }
+}
