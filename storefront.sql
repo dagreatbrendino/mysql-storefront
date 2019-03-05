@@ -34,7 +34,7 @@ VALUES ("Snowboard", "Sports", 150, 600);
 INSERT INTO products(product_name, department_name, price, stock_quantity)
 VALUES ("Helmet", "Sports", 85, 3000);
 INSERT INTO products(product_name, department_name, price, stock_quantity)
-VALUES ("'Fancy' Dinner Plate Set", "Home/Kitchen", 60, 1200);
+VALUES ('"Fancy" Dinner Plate Set', "Home/Kitchen", 60, 1200);
 INSERT INTO products(product_name, department_name, price, stock_quantity)
 VALUES ("Pot and Pan Set", "Home/Kitchen", 180, 400);
 INSERT INTO products(product_name, department_name, price, stock_quantity)

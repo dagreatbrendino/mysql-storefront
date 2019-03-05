@@ -1,8 +1,9 @@
+//Inquirer package for prompting users
 var inquirer = require("inquirer");
-
+//mysql package to utilize a backend database
 var mysql = require("mysql");
 
-
+//assign a variable that maintains a connection to the database
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -14,19 +15,19 @@ var connection = mysql.createConnection({
     database: "storefront_db"
 });
 
+//connect to the database
 connection.connect(function(err){
     if(err) throw err;
 
     console.log("connected as id: " + connection.threadId + "\n");
 })
-
+//display a table of all the products
 var getProducts = function(){
     connection.query("SELECT * FROM `products` ", function(error, res){
         if (error) throw error;
         console.table(res);
         promptID();
     });
-
 }
 
 getProducts();
@@ -40,15 +41,15 @@ var promptID = function(){
             message: "Please enter the ID of the product you wish to order..."
         }
     ]).then(function (answer){
-        //store the customers input and pass it 
+        //store the customers input and pass it into the next prompt
         var desired_prod = parseInt(answer.customer_choice);
+        console.log(desired_prod);
         promptQuantity(desired_prod);
     })
 }
 
 //prompt user for the amount of units they wish to order on that ID
-
-var promptQuantity = function(des_id){
+var promptQuantity = function(desired_id){
     inquirer.prompt([
         {
             name: "customer_quantity",
@@ -56,6 +57,36 @@ var promptQuantity = function(des_id){
         }
     ]).then(function (answer){
         var quantity = parseInt(answer.customer_quantity);
-        connection.end();
-    })
+        //get the stock_quantity of the product at the desired id
+        connection.query("SELECT * FROM `products` WHERE `id` = " + connection.escape(desired_id), function(error, results){
+            if (error) throw error;
+            //if the desired qunatity is less than the  stock_quantity place an order
+            if(quantity <= results[0].stock_quantity){
+                placeOrder(results[0], quantity);
+            }
+            //else inform customer that order is too large
+            else console.log("Sorry your order is too large!!");
+            // connection.end();
+        });
+
+    });
+}
+
+//this function will actually place the order and update the database
+var placeOrder = function(prod, quant){
+    console.log("Ordering " + quant + " of producat at id " + prod.id + " with name " + prod.product_name);
+    connection.query("UPDATE products SET ? WHERE ?",
+        [
+            {
+                stock_quantity: (prod.stock_quantity - quant)
+            },
+            {
+                id: prod.id
+            }
+        ],
+        function(err, result){
+            if (err) throw err;
+            console.log(result.affectedRows + 'product updated');
+        });
+        getProducts();
 }
