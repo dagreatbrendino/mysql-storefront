@@ -41,7 +41,15 @@ var viewLow = function(){
     })
 }
 
-//function that allows manager to add to product inventory
-
+//function that allows manager to add to product inventory of a specific product with a specific amount
+var addInventory = function(amount, prod){
+    connection.query(
+        "UPDATE products set stock_quantity = stock_quantity + ? WHERE id = ?", [ amount, prod ],
+        function(err, result){
+            if (err) throw err;
+            console.log(result)
+            console.log("Added " + amount + " stock to " + result[0].product_name);
+        });
+}
 //function that allows manager to add a new product through a series of prompts, validating input along the way
-viewLow();
+addInventory(5, 1);
