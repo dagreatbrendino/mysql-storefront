@@ -23,6 +23,14 @@ connection.connect(function(err){
 });
 
 //function that allows supervisor to view product sales by department
+var viewSales = function(){
+    connection.query("SELECT department_id, department_name, overhead_costs, ? AS Profit FROM departments ",
+    [1000],
+    function(err, res){
+        if (err) throw err;
+        console.table(res);
+    });
+}
 
 //function that allows supervisor to create a new department
 var createDepartment = function(depName, overhead){
@@ -33,4 +41,4 @@ var createDepartment = function(depName, overhead){
         console.log("New Department Added!");
     });
 }
-createDepartment("Movies", 3000);
+viewSales();
