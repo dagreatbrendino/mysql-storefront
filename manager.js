@@ -47,9 +47,17 @@ var addInventory = function(amount, prod){
         "UPDATE products set stock_quantity = stock_quantity + ? WHERE id = ?", [ amount, prod ],
         function(err, result){
             if (err) throw err;
-            console.log(result)
-            console.log("Added " + amount + " stock to " + result[0].product_name);
+            console.log("Stock updated!")
         });
 }
 //function that allows manager to add a new product through a series of prompts, validating input along the way
-addInventory(5, 1);
+var addProduct = function(name, department, price, stock){
+    connection.query("INSERT INTO products SET product_name = ?, department_name = ?, price = ?, stock_quantity = ?",
+    [name, department, price, stock]),
+    function(err, res){
+        if (err) throw err;
+        console.log("new product added!");
+    }
+}
+
+addProduct("gaming pc", "Video Games", 1800, 700);
