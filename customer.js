@@ -86,7 +86,26 @@ var placeOrder = function(prod, quant){
         ],
         function(err, result){
             if (err) throw err;
-            console.log(result.affectedRows + 'product updated');
         });
-        getProducts();
+        afterOrderPrompt();
+}
+
+//this prompt will either exit the application or allow the customer to place another order
+var afterOrderPrompt = function(){
+    inquirer.prompt([
+        {
+            type: "confirm",
+            name: "nextAction",
+            message: "Would you like to place another order?"
+        }
+
+    ]).then(function(answer){
+        if (answer.nextAction){
+            getProducts();
+        }
+        else{
+            console.log("Thanks for shopping with us!")
+            connection.end();
+        }
+    })
 }
