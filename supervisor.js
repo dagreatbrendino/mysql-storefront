@@ -24,8 +24,9 @@ connection.connect(function(err){
 
 //function that allows supervisor to view product sales by department
 var viewSales = function(){
-    connection.query("SELECT department_id, department_name, overhead_costs, ? AS Profit FROM departments ",
-    [1000],
+    connection.query("SELECT department_id, departments.department_name, overhead_costs, SUM(product_sales) AS product_sales, (SUM(product_sales) - overhead_costs) AS Profit FROM departments "+
+    "LEFT JOIN products ON departments.department_name = products.department_name "+
+    "GROUP BY department_name",
     function(err, res){
         if (err) throw err;
         console.table(res);
