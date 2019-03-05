@@ -21,7 +21,7 @@ connection.connect(function(err){
 
     console.log("connected as id: " + connection.threadId + "\n");
 })
-//display a table of all the products
+//display a table of all the products with all info except product_sales
 var getProducts = function(){
     connection.query("SELECT id, product_name, department_name, price, stock_quantity  FROM `products` ", function(error, res){
         if (error) throw error;
@@ -38,12 +38,11 @@ var promptID = function(){
     inquirer.prompt([
         {
             name: "customer_choice",
-            message: "Please enter the ID of the product you wish to order..."
+            message: "Please enter the ID of the product you wish to order: "
         }
     ]).then(function (answer){
         //store the customers input and pass it into the next prompt
         var desired_prod = parseInt(answer.customer_choice);
-        console.log(desired_prod);
         promptQuantity(desired_prod);
     })
 }
@@ -53,7 +52,7 @@ var promptQuantity = function(desired_id){
     inquirer.prompt([
         {
             name: "customer_quantity",
-            message: "How much of _____ would you like to order?"
+            message: "How much would you like to order?"
         }
     ]).then(function (answer){
         var quantity = parseInt(answer.customer_quantity);
@@ -66,7 +65,6 @@ var promptQuantity = function(desired_id){
             }
             //else inform customer that order is too large
             else console.log("Sorry your order is too large!!");
-            // connection.end();
         });
 
     });
@@ -74,14 +72,16 @@ var promptQuantity = function(desired_id){
 
 //this function will actually place the order and update the database
 var placeOrder = function(prod, quant){
-    console.log("Ordering " + quant + " of product at id " + prod.id + " with name " + prod.product_name);
+    console.log("Ordering " + quant + " "+ prod.product_name + "(s)");
     connection.query("UPDATE products SET ?, ? WHERE ?",
         [
+            //updating stock quantity
             {
                 stock_quantity: (prod.stock_quantity - quant)
             },
+            //tracking the sales
             {
-                product_sales: (prod.price * quant)
+                product_sales: prod.product_sales + (prod.price * quant)
             },
             {
                 id: prod.id
