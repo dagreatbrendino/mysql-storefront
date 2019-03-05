@@ -25,7 +25,7 @@ connection.connect(function(err){
 
 //function that allows manager to view all products for sale
 var viewProducts = function(){
-    connection.query("SELECT * FROM products", function(err, res){
+    connection.query("SELECT * FROM products ORDER BY department_name, product_name ASC", function(err, res){
         if (err) throw err;
         console.table(res);
         promptManager();
@@ -65,8 +65,9 @@ var addProduct = function(name, department, price, stock){
     });
   
 }
-
+//inqurier prompt for manager actions
 var promptManager = function(){
+    //Prompt the manager with a list of actions
     inquirer.prompt([
         {
             name: "managerAction",
@@ -76,6 +77,7 @@ var promptManager = function(){
         }
     ]).then(function (answer){
         var action = answer.managerAction;
+        //Perform the requested action
         switch (action){
             case "View Products": 
                 viewProducts();
@@ -83,6 +85,7 @@ var promptManager = function(){
             case "View Low Inventory":
                 viewLow();
                 break;
+            //If the manager is attemting to add stock to a product, they will be prompted for the id of the product and the amount to add to the stock
             case "Add Stock to Inventory":
                 inquirer.prompt([
                     {
@@ -96,12 +99,14 @@ var promptManager = function(){
                         message: "How much would you like to add?"
                     }
                 ]).then( function(ans){
+                    //Once the manager has provided the product id and amount to add, the addInventory() function will be called
                     var product = parseInt(ans.productToUpdate);
                     console.log(product);
                     var quantity = parseInt(ans.amountToAdd);
                     addInventory(quantity, product);
                 });
                 break;
+            //If the manager is attempting to add a new product, they will be prompted for its name, chose a department from a list, set the price, and quantity
             case "Add a New Product":
                 var departments =[];
                 connection.query("SELECT DISTINCT department_name FROM products", function(error, result){
@@ -132,6 +137,7 @@ var promptManager = function(){
                             message: "Enter the amount of the product to add to the stock: "
                         }
                     ]).then(function(ans){
+                        //Once the manager has provided all the require information, the product will be added to the database by calling the addProduct() function
                         var prodName = ans.productName;
                         var prodDep = ans.productDepartment
                         var prodPrice = parseInt(ans.productPrice);

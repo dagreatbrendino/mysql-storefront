@@ -41,3 +41,23 @@ INSERT INTO products(product_name, department_name, price, stock_quantity)
 VALUES ("Drumset", "Music", 850, 2000);
 INSERT INTO products(product_name, department_name, price, stock_quantity)
 VALUES ("Guitar", "Music", 1200, 1500);
+
+CREATE TABLE departments(
+    -- Create a numeric column called "department_id" which automatically increments and cannot be null --
+  department_id INTEGER NOT NULL AUTO_INCREMENT,
+
+  department_name VARCHAR(100) NOT NULL,
+
+  overhead_costs INTEGER NOT NULL,
+    -- Set the primary key of the table to id --
+  PRIMARY KEY(department_id)
+);
+
+INSERT INTO departments(department_name, overhead_costs)
+VALUES ("Home/Kitchen", 5000);
+INSERT INTO departments(department_name, overhead_costs)
+VALUES ("Music", 10000);
+INSERT INTO departments(department_name, overhead_costs)
+VALUES("Sports", 4300);
+INSERT INTO departments(department_name, overhead_costs)
+VALUES("Video Games", 13370);
