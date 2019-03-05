@@ -33,8 +33,15 @@ var viewProducts = function(){
 }
 
 //function that will show manager all products with inventory < 50
+var viewLow = function(){
+    connection.query("SELECT * FROM products WHERE stock_quantity < ?",[50], function(err,res){
+        if (err) throw err;
+        console.table(res);
+        connection.end();
+    })
+}
 
 //function that allows manager to add to product inventory
 
 //function that allows manager to add a new product through a series of prompts, validating input along the way
-viewProducts();
+viewLow();
