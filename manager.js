@@ -109,7 +109,7 @@ var promptManager = function(){
             //If the manager is attempting to add a new product, they will be prompted for its name, chose a department from a list, set the price, and quantity
             case "Add a New Product":
                 var departments =[];
-                connection.query("SELECT DISTINCT department_name FROM products", function(error, result){
+                connection.query("SELECT DISTINCT department_name FROM departments", function(error, result){
                     if (error) throw error;
                     result.forEach(function(element){
                         departments.push(element.department_name);

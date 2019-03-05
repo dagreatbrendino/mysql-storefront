@@ -30,6 +30,7 @@ var viewSales = function(){
     function(err, res){
         if (err) throw err;
         console.table(res);
+        promptSuper();
     });
 }
 
@@ -40,6 +41,43 @@ var createDepartment = function(depName, overhead){
     function(err, res){
         if (err) throw err;
         console.log("New Department Added!");
+        promptSuper();
     });
 }
-viewSales();
+
+var promptSuper = function(){
+    inquirer.prompt([
+        {
+            name: "superAction",
+            type: "list",
+            choices: ["View Department Sales", "Add a New Department","Logout"],
+            message: "What would you like to do?"
+        }
+    ]).then(function(answer){
+        switch(answer.superAction){
+            case "View Department Sales":
+                viewSales();
+                break;
+            case "Add a New Department":
+                inquirer.prompt([
+                    {
+                        name: "depName",
+                        type: "input",
+                        message: "Enter the name for the new department: "
+                    },
+                    {
+                        name: "depCost",
+                        type: "input",
+                        message: "Enter the overhead cost for this department: "
+                    }
+                ]).then(function(ans){
+                    createDepartment(ans.depName, parseInt(ans.depCost));
+                });
+                break;
+            case "Logout":
+                console.log("Goodbye!");
+                connection.end();
+        }
+    })
+}
+promptSuper();
